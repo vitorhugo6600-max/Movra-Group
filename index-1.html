@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOVRA — Seu carro deu problema? Descubra o próximo passo.</title>
+<meta name="description" content="A MOVRA ajuda você a entender o que pode estar acontecendo com o carro e a comparar até três oficinas por preço, avaliação, distância e disponibilidade. Produto em desenvolvimento.">
+<meta name="theme-color" content="#0B1F24">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1F24'/%3E%3Cpath d='M12 16h12l8 22 8-22h12L38 50H26z' fill='%2300E6A8'/%3E%3C/svg%3E">
+
+<style>
+/* =========================================================
+   MOVRA — landing page (HTML + CSS + JS puro, arquivo único)
+   Sumário: 1 Tokens · 2 Base · 3 Componentes · 4 Seções · 5 Responsivo
+   ========================================================= */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  --bg: #0B1F24;          /* azul-petróleo */
+  --bg-alt: #0F2A30;      /* variação para alternar seções escuras */
+  --surface: #133038;
+  --teal: #00E6A8;
+  --teal-hover: #33F0BC;
+  --teal-deep: #007A59;   /* teal legível sobre fundo claro */
+  --white: #FFFFFF;
+  --gray-100: #E8EDF0;
+  --gray-500: #687280;
+  --gray-700: #4A5560;    /* texto secundário sobre fundo claro (contraste AA) */
+  --muted: #A8B4BB;       /* texto secundário sobre fundo escuro (contraste AA) */
+  --line: rgba(232, 237, 240, .14);
+  --danger: #B3261E;
+  --warn-bg: #FFE8A3;
+  --warn-ink: #3D2A00;
+  --warn-line: #C98A00;
+  --radius: 20px;
+  --focus: #FFFFFF;       /* cor do anel de foco; muda nas seções claras */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------- 2. Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--white);
+  font: 400 1.0625rem/1.55 var(--font);
+  overflow-wrap: break-word;
+}
+
+svg { display: block; max-width: 100%; }
+button, input, textarea { font: inherit; }
+
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(2.2rem, 8.5vw, 4.25rem); }
+h2 { font-size: clamp(1.8rem, 6vw, 2.9rem); }
+h3 { font-size: 1.25rem; letter-spacing: -.01em; line-height: 1.2; }
+p { margin: 0 0 1em; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip {
+  position: absolute;
+  left: 12px; top: -64px;
+  z-index: 20;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--bg);
+  font-weight: 700;
+  text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+.container { width: min(100% - 40px, 1120px); margin-inline: auto; }
+
+/* ---------- 3. Componentes ---------- */
+
+/* Logo tipográfico */
+.logo {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-decoration: none;
+}
+.logo span { color: var(--teal); }
+
+.badge {
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 230, 168, .5);
+  border-radius: 999px;
+  color: var(--teal);
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 26px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.btn--primary { background: var(--teal); color: var(--bg); }
+.btn--primary:hover { background: var(--teal-hover); }
+.btn--outline { border-color: rgba(232, 237, 240, .4); background: transparent; color: #fff; }
+.btn--outline:hover { border-color: #fff; background: rgba(255, 255, 255, .08); }
+.btn--dark { background: var(--bg); color: #fff; }
+.btn--dark:hover { background: #17434D; }
+.btn--line-dark { border-color: var(--bg); background: transparent; color: var(--bg); }
+.btn--line-dark:hover { background: var(--bg); color: #fff; }
+.btn--block { width: 100%; }
+
+/* Textos de apoio */
+.lead { max-width: 58ch; margin-top: 16px; color: var(--muted); font-size: 1.125rem; }
+.lead--hero { color: #D6DEE3; font-size: 1.2rem; margin-top: 20px; }
+.fine { margin: 14px 0 0; color: var(--muted); font-size: .9rem; }
+.section--light .lead,
+.section--light .fine { color: var(--gray-700); }
+.section-head { max-width: 720px; margin-bottom: 32px; }
+
+/* Aviso (demonstração / versão de teste) */
+.banner {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border: 2px solid var(--warn-line);
+  border-radius: 16px;
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+.banner p { margin: 0; }
+.banner strong { font-weight: 800; }
+.banner-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--warn-ink);
+  color: var(--warn-bg);
+  font-weight: 800;
+}
+
+/* Conversa (chat) */
+.chat {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--bg-alt);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .6);
+}
+.chat-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.chat-top small { margin-left: auto; color: var(--muted); font-size: .875rem; }
+.chat-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); }
+.chat ul { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.bubble { max-width: 90%; padding: 12px 16px; border-radius: 20px; font-size: 1rem; line-height: 1.45; }
+.bubble--user { align-self: flex-end; border-bottom-right-radius: 6px; background: var(--gray-100); color: var(--bg); }
+.bubble--movra { align-self: flex-start; border: 1px solid rgba(0, 230, 168, .35); border-bottom-left-radius: 6px; background: var(--surface); }
+
+/* Único momento de movimento da página: a conversa do hero aparece em sequência */
+@media (prefers-reduced-motion: no-preference) {
+  .chat--intro .bubble { animation: rise .55s cubic-bezier(.2, .7, .2, 1) both; }
+  .chat--intro .bubble:nth-child(1) { animation-delay: .35s; }
+  .chat--intro .bubble:nth-child(2) { animation-delay: 1.3s; }
+  .chat--intro .bubble:nth-child(3) { animation-delay: 2.4s; }
+  .chat--intro .bubble:nth-child(4) { animation-delay: 3.5s; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* Cards de oficina */
+.shops { display: grid; gap: 16px; margin: 20px 0 0; padding: 0; list-style: none; }
+.shop {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid #D3DBE0;
+  border-radius: 24px;
+  background: #fff;
+}
+.shop-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.shop-spec { margin: 4px 0 0; color: var(--gray-700); font-size: .95rem; }
+.pill-demo {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.price { display: flex; flex-direction: column; margin: 0; }
+.price small { color: var(--gray-700); font-size: .9rem; }
+.price strong { font-size: 2.25rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid #D3DBE0;
+}
+.facts div:last-child { grid-column: 1 / -1; }
+.facts dt { color: var(--gray-700); font-size: .875rem; }
+.facts dd { margin: 2px 0 0; font-weight: 700; }
+.facts .small { color: var(--gray-700); font-size: .875rem; font-weight: 400; }
+.star { color: #C77700; }
+.shop .btn { margin-top: auto; }
+
+/* Filtros */
+.filters-label { margin: 24px 0 10px; font-weight: 700; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--bg);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--bg);
+  font-weight: 700;
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--bg); color: #fff; }
+
+/* Passos (como funciona) */
+.steps { position: relative; display: grid; gap: 28px; margin: 0; padding: 0; list-style: none; }
+.step { position: relative; padding-left: 64px; }
+.step-num {
+  position: absolute;
+  left: 0; top: 0;
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  border: 2px solid var(--teal);
+  border-radius: 50%;
+  background: var(--bg-alt);
+  color: var(--teal);
+  font-weight: 800;
+}
+.step:not(:last-child)::before {   /* linha tracejada: lembra uma rota */
+  content: "";
+  position: absolute;
+  left: 21px; top: 48px; bottom: -24px;
+  border-left: 2px dashed rgba(0, 230, 168, .45);
+}
+.step p { margin: 8px 0 0; color: var(--muted); }
+
+/* Benefícios */
+.benefits { display: grid; gap: 16px; margin: 32px 0 0; padding: 0; list-style: none; }
+.benefit { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+.benefit p { margin: 6px 0 0; color: var(--muted); font-size: 1rem; }
+.benefit-icon {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background: rgba(0, 230, 168, .12);
+  color: var(--teal);
+}
+.pull {
+  max-width: 28ch;
+  margin: 48px 0 0;
+  padding-left: 20px;
+  border-left: 4px solid var(--teal);
+  font-size: clamp(1.5rem, 4.5vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* Alerta de segurança */
+.alert {
+  margin-top: 24px;
+  padding: 16px 18px;
+  border-left: 4px solid #FFD166;
+  border-radius: 0 14px 14px 0;
+  background: rgba(255, 209, 102, .1);
+}
+.alert p { margin: 0; }
+
+/* Formulário */
+.form-card { padding: clamp(20px, 5vw, 36px); border-radius: 28px; background: #fff; }
+.form-card .banner { margin-bottom: 24px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.field label { font-weight: 700; }
+.hint { margin: 0; color: var(--gray-700); font-size: .9rem; }
+.input {
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 16px;
+  border: 2px solid var(--gray-500);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--bg);
+}
+textarea.input { min-height: 112px; resize: vertical; }
+.input:focus-visible { border-color: var(--bg); outline: 3px solid var(--bg); outline-offset: 2px; }
+.input[aria-invalid="true"] { border-color: var(--danger); }
+.error { margin: 0; color: var(--danger); font-size: .95rem; font-weight: 600; }
+.consent { display: flex; gap: 12px; align-items: flex-start; }
+.consent input { flex: none; width: 26px; height: 26px; margin: 2px 0 0; accent-color: var(--bg); }
+.consent label { font-weight: 500; }
+.success {
+  margin-top: 18px;
+  padding: 16px;
+  border: 2px solid var(--teal-deep);
+  border-radius: 14px;
+  background: #E3F8F1;
+  color: #00382A;
+}
+.success p { margin: 0; }
+
+/* Janela de detalhes */
+dialog {
+  --focus: var(--bg);
+  width: min(92vw, 460px);
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  background: #fff;
+  color: var(--bg);
+}
+dialog::backdrop { background: rgba(11, 31, 36, .78); }
+.dialog-body { padding: 28px; }
+.dialog-body h2 { margin-bottom: 14px; font-size: 1.5rem; }
+.dialog-body form { margin-top: 20px; }
+
+/* ---------- 4. Seções ---------- */
+.section { padding-block: clamp(56px, 9vw, 104px); }
+.section--alt { background: var(--bg-alt); }
+.section--light { --focus: var(--bg); background: var(--gray-100); color: var(--bg); }
+.section--teal { --focus: var(--bg); background: var(--teal); color: var(--bg); }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding-block: 20px; }
+
+.hero { padding-block: 24px clamp(56px, 9vw, 104px); }
+.hero-grid { display: grid; gap: 40px; }
+.hero-grid > * { min-width: 0; }
+.hero-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+
+.split { display: grid; gap: 36px; }
+.split > * { min-width: 0; }
+
+.cta { text-align: center; }
+.cta h2 { font-size: clamp(2rem, 7vw, 3.5rem); }
+.cta-slogan { margin: 16px 0 28px; font-size: 1.25rem; font-weight: 700; }
+
+.site-footer { padding-block: 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+.site-footer p { max-width: 62ch; margin: 12px 0 0; }
+.site-footer .logo { display: inline-block; }
+
+/* ---------- 5. Responsivo ---------- */
+@media (min-width: 560px) {
+  .hero-actions { flex-direction: row; flex-wrap: wrap; }
+  .benefits { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 800px) {
+  .steps { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .step { padding: 64px 0 0; }
+  .step:not(:last-child)::before {
+    left: 56px; right: -32px; top: 21px; bottom: auto;
+    height: 0;
+    border-left: 0;
+    border-top: 2px dashed rgba(0, 230, 168, .45);
+  }
+}
+
+@media (min-width: 900px) {
+  .hero-grid { grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center; }
+  .split { grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .split--top { align-items: start; }
+  .shops { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 1000px) {
+  .benefits { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+
+<body id="topo">
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+<header>
+  <div class="container topbar">
+    <a class="logo" href="#topo" aria-label="MOVRA, início">MO<span>V</span>RA</a>
+    <span class="badge">Em desenvolvimento</span>
+  </div>
+</header>
+
+<main id="conteudo">
+
+  <!-- 1. HERO -->
+  <section class="hero" aria-labelledby="titulo-hero">
+    <div class="container hero-grid">
+      <div>
+        <h1 id="titulo-hero">Seu carro deu problema? Descubra o próximo passo.</h1>
+        <p class="lead lead--hero">Entenda o que pode estar acontecendo e compare opções de oficinas por preço, avaliação, distância e disponibilidade.</p>
+        <div class="hero-actions">
+          <a class="btn btn--primary" href="#oficinas">Encontrar uma solução</a>
+          <a class="btn btn--outline" href="#como-funciona">Como funciona</a>
+        </div>
+        <p class="fine">Versão de demonstração: ainda não há oficinas conectadas.</p>
+      </div>
+
+      <figure class="chat chat--intro" aria-label="Exemplo de conversa entre motorista e MOVRA">
+        <div class="chat-top">
+          <span class="chat-dot" aria-hidden="true"></span>
+          <strong>MOVRA</strong>
+          <small>Exemplo de conversa</small>
+        </div>
+        <ul>
+          <li class="bubble bubble--user"><span class="sr-only">Motorista: </span>A luz do motor acendeu no painel.</li>
+          <li class="bubble bubble--movra"><span class="sr-only">MOVRA: </span>Vamos por partes. Ela está fixa ou piscando? O carro perdeu força ou está tremendo?</li>
+          <li class="bubble bubble--user"><span class="sr-only">Motorista: </span>Está piscando e o carro está tremendo.</li>
+          <li class="bubble bubble--movra"><span class="sr-only">MOVRA: </span>Luz piscando pode indicar algo sério. Se possível, pare em local seguro e evite seguir viagem. Vou te mostrar os próximos passos.</li>
+        </ul>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 2. COMO FUNCIONA -->
+  <section class="section section--alt" id="como-funciona" aria-labelledby="titulo-como">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="titulo-como">Como funciona</h2>
+        <p class="lead">Do problema à decisão, em três passos.</p>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num" aria-hidden="true">1</span>
+          <h3>Conte o que aconteceu</h3>
+          <p>Descreva o problema com suas palavras. A MOVRA faz as perguntas certas.</p>
+        </li>
+        <li class="step">
+          <span class="step-num" aria-hidden="true">2</span>
+          <h3>Entenda as possibilidades e o próximo passo</h3>
+          <p>Veja o que pode estar acontecendo e o que fazer agora, sem diagnóstico definitivo.</p>
+        </li>
+        <li class="step">
+          <span class="step-num" aria-hidden="true">3</span>
+          <h3>Compare até três oficinas compatíveis</h3>
+          <p>Preço inicial, nota, distância e disponibilidade lado a lado.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3. DEMONSTRAÇÃO DE OFICINAS -->
+  <section class="section section--light" id="oficinas" aria-labelledby="titulo-oficinas">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="titulo-oficinas">Compare oficinas lado a lado</h2>
+        <p class="lead">Exemplo de busca: revisão do sistema de arrefecimento. É assim que a MOVRA vai mostrar até três opções compatíveis.</p>
+      </div>
+
+      <div class="banner" role="note">
+        <span class="banner-icon" aria-hidden="true">!</span>
+        <p><strong>DEMONSTRAÇÃO — dados fictícios.</strong> Preços, avaliações, distâncias e disponibilidade não são reais.</p>
+      </div>
+
+      <p class="filters-label" id="rotulo-filtros">Ordenar o exemplo por</p>
+      <div class="filters" role="group" aria-labelledby="rotulo-filtros">
+        <button type="button" class="chip" data-sort="preco" aria-pressed="false">Menor preço</button>
+        <button type="button" class="chip" data-sort="distancia" aria-pressed="false">Menor distância</button>
+        <button type="button" class="chip" data-sort="avaliacao" aria-pressed="false">Melhor avaliação</button>
+      </div>
+      <p class="fine" id="status-filtro" role="status">Os filtros apenas reordenam os três exemplos fictícios. Não representam uma busca real.</p>
+
+      <ul class="shops" id="lista-oficinas">
+        <li class="shop" data-preco="180" data-distancia="2.1" data-nota="4.8">
+          <div class="shop-head">
+            <div>
+              <h3>Oficina A</h3>
+              <p class="shop-spec">Arrefecimento e parte elétrica</p>
+            </div>
+            <span class="pill-demo">Fictício</span>
+          </div>
+          <p class="price"><small>a partir de</small><strong>R$ 180</strong></p>
+          <dl class="facts">
+            <div><dt>Avaliação</dt><dd><span class="star" aria-hidden="true">★</span> 4,8 <span class="small">(120 avaliações)</span></dd></div>
+            <div><dt>Distância</dt><dd>2,1 km</dd></div>
+            <div><dt>Disponibilidade</dt><dd>Recebe hoje</dd></div>
+          </dl>
+          <button type="button" class="btn btn--line-dark btn--block" data-detalhes="Oficina A">Ver detalhes</button>
+        </li>
+
+        <li class="shop" data-preco="140" data-distancia="3.4" data-nota="4.6">
+          <div class="shop-head">
+            <div>
+              <h3>Oficina B</h3>
+              <p class="shop-spec">Mecânica geral e revisão</p>
+            </div>
+            <span class="pill-demo">Fictício</span>
+          </div>
+          <p class="price"><small>a partir de</small><strong>R$ 140</strong></p>
+          <dl class="facts">
+            <div><dt>Avaliação</dt><dd><span class="star" aria-hidden="true">★</span> 4,6 <span class="small">(85 avaliações)</span></dd></div>
+            <div><dt>Distância</dt><dd>3,4 km</dd></div>
+            <div><dt>Disponibilidade</dt><dd>Recebe amanhã</dd></div>
+          </dl>
+          <button type="button" class="btn btn--line-dark btn--block" data-detalhes="Oficina B">Ver detalhes</button>
+        </li>
+
+        <li class="shop" data-preco="210" data-distancia="1.5" data-nota="4.9">
+          <div class="shop-head">
+            <div>
+              <h3>Oficina C</h3>
+              <p class="shop-spec">Arrefecimento e injeção eletrônica</p>
+            </div>
+            <span class="pill-demo">Fictício</span>
+          </div>
+          <p class="price"><small>a partir de</small><strong>R$ 210</strong></p>
+          <dl class="facts">
+            <div><dt>Avaliação</dt><dd><span class="star" aria-hidden="true">★</span> 4,9 <span class="small">(210 avaliações)</span></dd></div>
+            <div><dt>Distância</dt><dd>1,5 km</dd></div>
+            <div><dt>Disponibilidade</dt><dd>Próxima vaga disponível</dd></div>
+          </dl>
+          <button type="button" class="btn btn--line-dark btn--block" data-detalhes="Oficina C">Ver detalhes</button>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. ORIENTAÇÃO AUTOMOTIVA -->
+  <section class="section" id="orientacao" aria-labelledby="titulo-orientacao">
+    <div class="container split">
+      <div>
+        <h2 id="titulo-orientacao">A MOVRA pergunta antes de opinar.</h2>
+        <p class="lead">Cada carro e cada situação são diferentes. Por isso a conversa começa com perguntas, não com um diagnóstico.</p>
+        <p class="fine">Exemplo ilustrativo. A MOVRA não dá diagnóstico definitivo e não substitui a avaliação de um profissional.</p>
+        <div class="alert" role="note">
+          <p><strong>Segurança primeiro.</strong> Ponteiro de temperatura no vermelho, fumaça, luz de freio acesa ou cheiro de queimado? Pare em local seguro, desligue o motor e chame um profissional ou o guincho. Não continue dirigindo.</p>
+        </div>
+      </div>
+
+      <figure class="chat" aria-label="Exemplo de conversa sobre superaquecimento">
+        <div class="chat-top">
+          <span class="chat-dot" aria-hidden="true"></span>
+          <strong>MOVRA</strong>
+          <small>Exemplo de conversa</small>
+        </div>
+        <ul>
+          <li class="bubble bubble--user"><span class="sr-only">Motorista: </span>Meu carro está esquentando no trânsito.</li>
+          <li class="bubble bubble--movra"><span class="sr-only">MOVRA: </span>Vamos entender melhor. Qual é o modelo e ano do seu carro? A temperatura sobe até a zona vermelha?</li>
+          <li class="bubble bubble--user"><span class="sr-only">Motorista: </span>Sobe até o vermelho quando fico parado.</li>
+          <li class="bubble bubble--movra"><span class="sr-only">MOVRA: </span>Se o ponteiro chegar ao vermelho, pare em local seguro e desligue o motor. Não abra a tampa do radiador com o motor quente. Depois, vamos ver as possibilidades e quem pode avaliar o carro.</li>
+        </ul>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 5. BENEFÍCIOS -->
+  <section class="section section--alt" id="beneficios" aria-labelledby="titulo-beneficios">
+    <div class="container">
+      <div class="section-head" style="margin-bottom:0">
+        <h2 id="titulo-beneficios">Decidir sobre o carro sem complicação</h2>
+      </div>
+      <ul class="benefits">
+        <li class="benefit">
+          <span class="benefit-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/></svg>
+          </span>
+          <h3>Entenda melhor o problema</h3>
+          <p>Perguntas simples antes de qualquer palpite.</p>
+        </li>
+        <li class="benefit">
+          <span class="benefit-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="7" height="14" rx="2"/><rect x="13" y="9" width="7" height="10" rx="2"/></svg>
+          </span>
+          <h3>Compare opções de atendimento</h3>
+          <p>Até três oficinas compatíveis, lado a lado.</p>
+        </li>
+        <li class="benefit">
+          <span class="benefit-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h8.5l9 9a1.5 1.5 0 0 1 0 2.1l-5.4 5.4a1.5 1.5 0 0 1-2.1 0L3 12.5V4z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>
+          </span>
+          <h3>Veja preços iniciais e disponibilidade</h3>
+          <p>Saiba por quanto começa e quando podem receber.</p>
+        </li>
+        <li class="benefit">
+          <span class="benefit-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>
+          </span>
+          <h3>Tome uma decisão com mais clareza</h3>
+          <p>Informação clara, sem jargão técnico.</p>
+        </li>
+      </ul>
+      <blockquote class="pull">Você não precisa entender de mecânica para tomar uma boa decisão sobre seu carro.</blockquote>
+    </div>
+  </section>
+
+  <!-- 6. PRIMEIROS USUÁRIOS -->
+  <section class="section section--light" id="primeiros-usuarios" aria-labelledby="titulo-usuarios">
+    <div class="container split split--top">
+      <div>
+        <h2 id="titulo-usuarios">Ajude a construir a MOVRA.</h2>
+        <p class="lead">Estamos validando a MOVRA e queremos ouvir motoristas como você. Conte o que mais pesa quando o carro dá problema e participe da validação da primeira versão.</p>
+      </div>
+
+      <div class="form-card">
+        <div class="banner" role="note">
+          <span class="banner-icon" aria-hidden="true">!</span>
+          <p><strong>Como funciona:</strong> ao enviar, abrimos o WhatsApp com sua mensagem pronta. Seu cadastro só chega até nós quando você tocar em "Enviar" no WhatsApp.</p>
+        </div>
+
+        <form id="form-cadastro" novalidate>
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input class="input" type="text" id="nome" name="nome" autocomplete="name" aria-describedby="erro-nome" required>
+            <p class="error" id="erro-nome" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="whatsapp">WhatsApp</label>
+            <input class="input" type="tel" id="whatsapp" name="whatsapp" inputmode="tel" autocomplete="tel-national" placeholder="(11) 91234-5678" aria-describedby="dica-whatsapp erro-whatsapp" required>
+            <p class="hint" id="dica-whatsapp">Com DDD.</p>
+            <p class="error" id="erro-whatsapp" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="carro">Marca e modelo do carro</label>
+            <input class="input" type="text" id="carro" name="carro" autocomplete="off" placeholder="Ex.: Volkswagen Gol" aria-describedby="erro-carro" required>
+            <p class="error" id="erro-carro" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="dificuldade">Qual é sua principal dificuldade quando o carro apresenta problemas?</label>
+            <textarea class="input" id="dificuldade" name="dificuldade" rows="3" maxlength="500" aria-describedby="erro-dificuldade" required></textarea>
+            <p class="error" id="erro-dificuldade" hidden></p>
+          </div>
+
+          <div class="field">
+            <div class="consent">
+              <input type="checkbox" id="consentimento" name="consentimento" aria-describedby="erro-consentimento" required>
+              <label for="consentimento">Aceito ser contatado pela MOVRA por WhatsApp sobre a validação do produto.</label>
+            </div>
+            <p class="error" id="erro-consentimento" hidden></p>
+          </div>
+
+          <p class="fine" style="margin:0 0 20px">Nota sobre dados: nome, WhatsApp, carro e resposta seguem por mensagem de WhatsApp, só quando você tocar em "Enviar", e serão usados apenas para convidar você a testar a MOVRA e entender as dificuldades dos motoristas. Este site não guarda esses dados.</p>
+
+          <button type="submit" class="btn btn--dark btn--block">Quero ser um dos primeiros usuários</button>
+
+          <div class="success" id="sucesso" role="status" tabindex="-1" hidden>
+            <p><strong>Quase lá!</strong> Abrimos o WhatsApp com sua mensagem pronta. Toque em "Enviar" para concluir. Não abriu? <a id="link-whatsapp" href="#">Abrir o WhatsApp</a>.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. CTA FINAL -->
+  <section class="section section--teal cta" aria-labelledby="titulo-cta">
+    <div class="container">
+      <h2 id="titulo-cta">Seu carro. Sua decisão.</h2>
+      <p class="cta-slogan">Entender. Decidir. Seguir.</p>
+      <a class="btn btn--dark" href="#primeiros-usuarios">Tenho interesse na MOVRA</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- 8. RODAPÉ -->
+<footer class="site-footer">
+  <div class="container">
+    <a class="logo" href="#topo" aria-label="MOVRA, voltar ao topo">MO<span>V</span>RA</a>
+    <p>MOVRA — Inteligência automotiva para quem dirige.</p>
+    <p>Produto em desenvolvimento. As oficinas, preços, avaliações e disponibilidades exibidos nesta página são fictícios e servem apenas como demonstração. A MOVRA não substitui a avaliação de um profissional.</p>
+  </div>
+</footer>
+
+<!-- Janela exibida em "Ver detalhes" -->
+<dialog id="detalhes" aria-labelledby="detalhes-titulo">
+  <div class="dialog-body">
+    <h2 id="detalhes-titulo">Detalhes da oficina</h2>
+    <p>Esta funcionalidade será disponibilizada quando a MOVRA tiver integração com oficinas verificadas.</p>
+    <p class="hint">Os dados desta página são fictícios e servem apenas para demonstrar como a comparação vai funcionar.</p>
+    <form method="dialog">
+      <button class="btn btn--dark btn--block">Entendi</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ---------- 1. Filtros de exemplo (só reordenam os 3 cards fictícios) ---------- */
+  const list = document.getElementById('lista-oficinas');
+  const cards = Array.from(list.children);
+  const chips = document.querySelectorAll('.chip');
+  const statusEl = document.getElementById('status-filtro');
+  const DEFAULT_STATUS = 'Os filtros apenas reordenam os três exemplos fictícios. Não representam uma busca real.';
+
+  const sorters = {
+    preco: (a, b) => Number(a.dataset.preco) - Number(b.dataset.preco),
+    distancia: (a, b) => Number(a.dataset.distancia) - Number(b.dataset.distancia),
+    avaliacao: (a, b) => Number(b.dataset.nota) - Number(a.dataset.nota)
+  };
+  const labels = { preco: 'menor preço', distancia: 'menor distância', avaliacao: 'melhor avaliação' };
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.sort;
+      const wasActive = chip.getAttribute('aria-pressed') === 'true';
+      chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
+
+      let ordered;
+      if (wasActive) {
+        ordered = cards.slice();
+        statusEl.textContent = DEFAULT_STATUS;
+      } else {
+        chip.setAttribute('aria-pressed', 'true');
+        ordered = cards.slice().sort(sorters[key]);
+        statusEl.textContent = 'Exemplos ordenados por ' + labels[key] + '. Dados fictícios: isto não é uma busca real.';
+      }
+      ordered.forEach(card => list.appendChild(card));
+    });
+  });
+
+  /* ---------- 2. Janela "Ver detalhes" ---------- */
+  const dialog = document.getElementById('detalhes');
+  const dialogTitle = document.getElementById('detalhes-titulo');
+
+  document.querySelectorAll('[data-detalhes]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      dialogTitle.textContent = 'Detalhes da ' + btn.dataset.detalhes;
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute('open', '');
+      }
+    });
+  });
+  // Clicar fora da janela também fecha
+  dialog.addEventListener('click', e => {
+    if (e.target === dialog && typeof dialog.close === 'function') dialog.close();
+  });
+
+  /* ---------- 3. Formulário (validação no navegador; NADA é enviado) ---------- */
+  // Número que recebe os cadastros (formato internacional, só dígitos: 55 + DDD + número)
+  const WHATSAPP_DESTINO = '5511990123115';
+  const form = document.getElementById('form-cadastro');
+  const success = document.getElementById('sucesso');
+  const whatsapp = document.getElementById('whatsapp');
+  const fields = ['nome', 'whatsapp', 'carro', 'dificuldade', 'consentimento']
+    .map(id => document.getElementById(id));
+
+  function onlyPhoneDigits(value) {
+    let d = value.replace(/\D/g, '');
+    if (d.length > 11 && d.startsWith('55')) d = d.slice(2); // aceita +55
+    return d.slice(0, 11);
+  }
+
+  function formatPhone(value) {
+    const d = onlyPhoneDigits(value);
+    if (!d) return '';
+    if (d.length < 3) return '(' + d;
+    if (d.length < 8) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  }
+
+  whatsapp.addEventListener('input', () => {
+    whatsapp.value = formatPhone(whatsapp.value);
+  });
+
+  const validators = {
+    nome: v => (v.trim().length >= 2 && /[A-Za-zÀ-ÿ]/.test(v)) ? '' : 'Informe seu nome.',
+    whatsapp: v => /^[1-9][1-9]9\d{8}$/.test(onlyPhoneDigits(v)) ? '' : 'Informe o WhatsApp com DDD. Exemplo: (11) 91234-5678.',
+    carro: v => v.trim().length >= 2 ? '' : 'Informe a marca e o modelo do carro.',
+    dificuldade: v => v.trim().length >= 5 ? '' : 'Conte em poucas palavras qual é sua principal dificuldade.'
+  };
+
+  function setError(input, message) {
+    const err = document.getElementById('erro-' + input.id);
+    if (message) {
+      err.textContent = message;
+      err.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+    } else {
+      err.textContent = '';
+      err.hidden = true;
+      input.removeAttribute('aria-invalid');
+    }
+    return !message;
+  }
+
+  function validateField(input) {
+    if (input.type === 'checkbox') {
+      return setError(input, input.checked ? '' : 'Para continuar, marque a autorização de contato por WhatsApp.');
+    }
+    return setError(input, validators[input.id](input.value));
+  }
+
+  // Depois que um campo foi marcado com erro, revalida enquanto a pessoa corrige
+  fields.forEach(f => {
+    f.addEventListener(f.type === 'checkbox' ? 'change' : 'input', () => {
+      if (f.getAttribute('aria-invalid') === 'true') validateField(f);
+    });
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    success.hidden = true;
+
+    let firstInvalid = null;
+    fields.forEach(f => {
+      if (!validateField(f) && !firstInvalid) firstInvalid = f;
+    });
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    // Monta a mensagem e abre o WhatsApp. O cadastro só chega ao destino
+    // quando a pessoa toca em "Enviar" dentro do WhatsApp. Nada é guardado no site.
+    // (Para um painel de cadastros automático, conecte um serviço como
+    // Formspree, Netlify Forms ou backend próprio e publique política de privacidade.)
+    const v = id => document.getElementById(id).value.trim();
+    const texto = [
+      'Olá! Quero ser um dos primeiros usuários da MOVRA.',
+      'Nome: ' + v('nome'),
+      'WhatsApp: ' + v('whatsapp'),
+      'Carro: ' + v('carro'),
+      'Principal dificuldade: ' + v('dificuldade'),
+      'Autorizo contato por WhatsApp.'
+    ].join('\n');
+    const url = 'https://wa.me/' + WHATSAPP_DESTINO + '?text=' + encodeURIComponent(texto);
+
+    document.getElementById('link-whatsapp').href = url;
+    window.open(url, '_blank', 'noopener');
+
+    form.reset();
+    success.hidden = false;
+    success.focus();
+  });
+})();
+</script>
+</body>
+</html>
